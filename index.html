@@ -119,6 +119,7 @@ button:hover {
 }
 
 /* popup */
+/* popup */
 .popup {
     position: fixed;
     inset: 0;
@@ -126,6 +127,7 @@ button:hover {
     display: none;
     justify-content: center;
     align-items: center;
+    z-index: 9999;
 }
 
 .popup-box {
@@ -133,6 +135,13 @@ button:hover {
     padding: 30px;
     border-radius: 10px;
     text-align: center;
+    z-index: 10000;
+}
+
+/* фикс слоев */
+.wave,
+.sensor {
+    z-index: 1;
 }
 </style>
 </head>
@@ -212,8 +221,10 @@ document.getElementById("form").addEventListener("submit", async function(e) {
     const result = await res.json();
 
     if (result.status === "ok") {
-        document.getElementById("popup").style.display = "flex";
-        this.reset();
+    document.getElementById("popup").style.display = "flex";
+    document.body.style.overflow = "hidden";
+    this.reset();
+}
     } else if (result.status === "full") {
         alert("Мест больше нет");
     } else {
@@ -223,6 +234,7 @@ document.getElementById("form").addEventListener("submit", async function(e) {
 
 function closePopup() {
     document.getElementById("popup").style.display = "none";
+    document.body.style.overflow = "auto";
 }
 </script>
 
