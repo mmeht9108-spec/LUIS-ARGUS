@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Регистрация — Луис+ Аргус</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at center, #0a0f1c, #05070d);
+    color: white;
+    overflow-x: hidden;
+}
+
+/* радиоволны */
+.wave {
+    position: absolute;
+    border: 1px solid rgba(255,0,0,0.3);
+    border-radius: 50%;
+    animation: pulse 6s infinite;
+}
+
+.wave:nth-child(1) { width: 300px; height: 300px; top: 20%; left: 10%; }
+.wave:nth-child(2) { width: 500px; height: 500px; top: 50%; left: 70%; }
+.wave:nth-child(3) { width: 400px; height: 400px; top: 70%; left: 20%; }
+
+@keyframes pulse {
+    0% { transform: scale(0.7); opacity: 0.6; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* датчики */
+.sensor {
+    width: 10px;
+    height: 10px;
+    background: red;
+    border-radius: 50%;
+    position: absolute;
+    animation: blink 2s infinite;
+}
+
+.sensor:nth-child(4) { top: 30%; left: 40%; }
+.sensor:nth-child(5) { top: 60%; left: 60%; }
+.sensor:nth-child(6) { top: 75%; left: 30%; }
+
+@keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
+
+/* контейнер */
+.container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+/* стеклянная карточка */
+.card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(255,0,0,0.2);
+}
+
+/* логотипы */
+.logos {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.logos img {
+    height: 45px;
+}
+
+/* заголовок */
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.event {
+    text-align: center;
+    color: #aaa;
+    margin-bottom: 20px;
+}
+
+/* форма */
+input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #ff0000, #ff4d4d);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* popup */
+.popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-box {
+    background: #111;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<!-- визуальные элементы -->
+<div class="wave"></div>
+<div class="wave"></div>
+<div class="wave"></div>
+
+<div class="sensor"></div>
+<div class="sensor"></div>
+<div class="sensor"></div>
+
+<div class="container">
+    <div class="card">
+
+        <div class="logos">
+            <img src="luis.png">
+            <img src="argus.png">
+        </div>
+
+        <h1>Партнерский день</h1>
+        <h1>Луис + Аргус</h1>
+
+        <div class="event">
+            21 мая 2026 • 10:00<br>
+            Гостиница Броско Молл
+        </div>
+
+        <form id="form">
+            <input type="text" placeholder="Фамилия" required>
+            <input type="text" placeholder="Имя" required>
+            <input type="text" placeholder="Отчество" required>
+            <input type="email" placeholder="Email" required>
+            <input type="tel" placeholder="Телефон" required>
+            <input type="text" placeholder="Компания" required>
+            <input type="text" placeholder="Должность" required>
+
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+
+    </div>
+</div>
+
+<div class="popup" id="popup">
+    <div class="popup-box">
+        <h3>Регистрация успешна ✅</h3>
+        <button onclick="closePopup()">Ок</button>
+    </div>
+</div>
+
+<script>
+const API_URL = "ВСТАВЬ_СЮДА_URL";
+
+document.getElementById("form").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const inputs = this.querySelectorAll("input");
+
+    const data = {
+        lastName: inputs[0].value,
+        firstName: inputs[1].value,
+        middleName: inputs[2].value,
+        email: inputs[3].value,
+        phone: inputs[4].value,
+        company: inputs[5].value,
+        position: inputs[6].value
+    };
+
+    const res = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (result.status === "ok") {
+        document.getElementById("popup").style.display = "flex";
+        this.reset();
+    } else if (result.status === "full") {
+        alert("Мест больше нет");
+    } else {
+        alert("Вы уже зарегистрированы");
+    }
+});
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+}
+</script>
+
+</body>
+</html>
